@@ -1,19 +1,5 @@
 [
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "ISSS608",
-    "section": "",
-    "text": "welcome"
-  },
-  {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "About",
-    "section": "",
-    "text": "About this site\n\n1 + 1\n\n[1] 2"
-  },
-  {
     "objectID": "Hand-on_ex/Hand-on_ex1/Hands-on_Ex01.html",
     "href": "Hand-on_ex/Hand-on_ex1/Hands-on_Ex01.html",
     "title": "Hands-on Exercise 1",
@@ -138,5 +124,19 @@
     "title": "Hands-on Exercise 1",
     "section": "Changing the x and y-axis range",
     "text": "Changing the x and y-axis range\nThe scatter plot below is slightly misleading because the y-axis and x-axis range are not equal.\n\nggplot(data = exam_data,\n       aes(x = MATHS, y = ENGLISH)) +\n  geom_point() +\n  geom_smooth(method = lm, linewidth=0.5)\n\n`geom_smooth()` using formula = 'y ~ x'\n\n\n\n\n\n\n\n\n\nThe code chunk below fixed both the y-axis and x-axis range from 0-100.\n\nggplot(data = exam_data,\n       aes(x = MATHS, y = ENGLISH)) +\n  geom_point() +\n  geom_smooth(method = lm, linewidth=0.5) +\n  coord_cartesian(xlim = c(0, 100),\n                  ylim = c(0, 100))\n\n`geom_smooth()` using formula = 'y ~ x'"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "ISSS608",
+    "section": "",
+    "text": "welcome"
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "About this site\n\n1 + 1\n\n[1] 2"
   }
 ]
