@@ -753,7 +753,7 @@
     "href": "Hand-on_ex/Hand-on_ex5/Hands-on_Ex5.2.html#installing-and-launching-r-packages",
     "title": "Hands-on_Ex5.2",
     "section": "1.1 Installing and Launching R Packages",
-    "text": "1.1 Installing and Launching R Packages\nBefore you get started, you are required to open a new Quarto document. Keep the default html authoring format.\nNext, you will use the code chunk below to install and launch corrplot, ggpubr, plotly and tidyverse in RStudio.\n\npacman::p_load(corrplot, ggstatsplot, tidyverse)\n\n\nThe downloaded binary packages are in\n    /var/folders/zh/67j59v916z17skl95tl1wmzw0000gn/T//RtmpOL6AtG/downloaded_packages"
+    "text": "1.1 Installing and Launching R Packages\nBefore you get started, you are required to open a new Quarto document. Keep the default html authoring format.\nNext, you will use the code chunk below to install and launch corrplot, ggpubr, plotly and tidyverse in RStudio.\n\npacman::p_load(corrplot, ggstatsplot, tidyverse)"
   },
   {
     "objectID": "Hand-on_ex/Hand-on_ex5/Hands-on_Ex5.2.html#importing-and-preparing-the-dataset",
