@@ -24,7 +24,9 @@ website:
           - text: "Hands-on Exercise 4.4"
             href: "Hand-on_ex/Hand-on_ex4/Hands-on_Ex4.4.qmd"
           - text: "Hands-on Exercise 5.1"
-            href: "Hand-on_ex/Hand-on_ex5/Hands-on_Ex5.1.qmd"            
+            href: "Hand-on_ex/Hand-on_ex5/Hands-on_Ex5.1.qmd" 
+          - text: "Hands-on Exercise 5.2"
+            href: "Hand-on_ex/Hand-on_ex5/Hands-on_Ex5.2.qmd"
     right:
       - text: Home
         href: index.qmd
