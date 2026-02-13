@@ -684,5 +684,68 @@
     "title": "Hands-on_Ex4.3",
     "section": "Visualising Uncertainty with Hypothetical Outcome Plots (HOPs)",
     "text": "Visualising Uncertainty with Hypothetical Outcome Plots (HOPs)\n\nInstalling ungeviz package\n\ndevtools::install_github(\"wilkelab/ungeviz\")\n\n\n\nLaunch the application in R\n\nlibrary(ungeviz)\n\n\n\nVisualising Uncertainty with Hypothetical Outcome Plots (HOPs)\nNext, the code chunk below will be used to build the HOPs.\n\nggplot(data = exam, \n       (aes(x = factor(RACE), \n            y = MATHS))) +\n  geom_point(position = position_jitter(\n    height = 0.3, \n    width = 0.05), \n    size = 0.4, \n    color = \"#0072B2\", \n    alpha = 1/2) +\n  geom_hpline(data = sampler(25, \n                             group = RACE), \n              height = 0.6, \n              color = \"#D55E00\") +\n  theme_bw() + \n  transition_states(.draw, 1, 3)\n\nWarning in geom_hpline(data = sampler(25, group = RACE), height = 0.6, color =\n\"#D55E00\"): Ignoring unknown parameters: `height`"
+  },
+  {
+    "objectID": "Hand-on_ex/Hand-on_ex5/Hands-on_Ex5.1.html#the-data",
+    "href": "Hand-on_ex/Hand-on_ex5/Hands-on_Ex5.1.html#the-data",
+    "title": "Hands-on_Ex5.1",
+    "section": "3.1 The data",
+    "text": "3.1 The data\nFor the purpose of this hands-on exercise, the Singapore Residents by Planning AreaSubzone, Age Group, Sex and Type of Dwelling, June 2000-2018 data will be used. The data set has been downloaded and included in the data sub-folder of the hands-on exercise folder. It is called respopagsex2000to2018_tidy.csv and is in csv file format."
+  },
+  {
+    "objectID": "Hand-on_ex/Hand-on_ex5/Hands-on_Ex5.1.html#importing-data",
+    "href": "Hand-on_ex/Hand-on_ex5/Hands-on_Ex5.1.html#importing-data",
+    "title": "Hands-on_Ex5.1",
+    "section": "3.2 Importing Data",
+    "text": "3.2 Importing Data\nTo important respopagsex2000to2018_tidy.csv into R, read_csv() function of readr package will be used.\n\n#Reading the data into R environment\npop_data &lt;- read_csv(\"data/respopagsex2000to2018_tidy.csv\")"
+  },
+  {
+    "objectID": "Hand-on_ex/Hand-on_ex5/Hands-on_Ex5.1.html#preparing-the-data",
+    "href": "Hand-on_ex/Hand-on_ex5/Hands-on_Ex5.1.html#preparing-the-data",
+    "title": "Hands-on_Ex5.1",
+    "section": "3.3 Preparing the Data",
+    "text": "3.3 Preparing the Data\nNext, use the mutate() function of dplyr package to derive three new measures, namely: young, active, and old.\n\n#Deriving the young, economy active and old measures\nagpop_mutated &lt;- pop_data %&gt;%\n  mutate(`Year` = as.character(Year))%&gt;%\n  spread(AG, Population) %&gt;%\n  mutate(YOUNG = rowSums(.[4:8]))%&gt;%\n  mutate(ACTIVE = rowSums(.[9:16]))  %&gt;%\n  mutate(OLD = rowSums(.[17:21])) %&gt;%\n  mutate(TOTAL = rowSums(.[22:24])) %&gt;%\n  filter(Year == 2018)%&gt;%\n  filter(TOTAL &gt; 0)"
+  },
+  {
+    "objectID": "Hand-on_ex/Hand-on_ex5/Hands-on_Ex5.1.html#plotting-a-static-ternary-diagram",
+    "href": "Hand-on_ex/Hand-on_ex5/Hands-on_Ex5.1.html#plotting-a-static-ternary-diagram",
+    "title": "Hands-on_Ex5.1",
+    "section": "4.1 Plotting a static ternary diagram",
+    "text": "4.1 Plotting a static ternary diagram\nUse ggtern() function of ggtern package to create a simple ternary plot.\n\n#Building the static ternary plot\nggtern(data=agpop_mutated,aes(x=YOUNG,y=ACTIVE, z=OLD)) +\n  geom_point()\n\n\n\n\n\n\n\n\n\n#Building the static ternary plot\nggtern(data=agpop_mutated, aes(x=YOUNG,y=ACTIVE, z=OLD)) +\n  geom_point() +\n  labs(title=\"Population structure, 2015\") +\n  theme_rgbw()"
+  },
+  {
+    "objectID": "Hand-on_ex/Hand-on_ex5/Hands-on_Ex5.1.html#plotting-an-interactive-ternary-diagram",
+    "href": "Hand-on_ex/Hand-on_ex5/Hands-on_Ex5.1.html#plotting-an-interactive-ternary-diagram",
+    "title": "Hands-on_Ex5.1",
+    "section": "4.2 Plotting an interactive ternary diagram",
+    "text": "4.2 Plotting an interactive ternary diagram\nThe code below create an interactive ternary plot using plot_ly() function of Plotly R.\n\n# reusable function for creating annotation object\nlabel &lt;- function(txt) {\n  list(\n    text = txt, \n    x = 0.1, y = 1,\n    ax = 0, ay = 0,\n    xref = \"paper\", yref = \"paper\", \n    align = \"center\",\n    font = list(family = \"serif\", size = 15, color = \"white\"),\n    bgcolor = \"#b3b3b3\", bordercolor = \"black\", borderwidth = 2\n  )\n}\n\n# reusable function for axis formatting\naxis &lt;- function(txt) {\n  list(\n    title = txt, tickformat = \".0%\", tickfont = list(size = 10)\n  )\n}\n\nternaryAxes &lt;- list(\n  aaxis = axis(\"Young\"), \n  baxis = axis(\"Active\"), \n  caxis = axis(\"Old\")\n)\n\n# Initiating a plotly visualization \nplot_ly(\n  agpop_mutated, \n  a = ~YOUNG, \n  b = ~ACTIVE, \n  c = ~OLD, \n  color = I(\"black\"), \n  type = \"scatterternary\"\n) %&gt;%\n  layout(\n    annotations = label(\"Ternary Markers\"), \n    ternary = ternaryAxes\n  )"
+  },
+  {
+    "objectID": "Hand-on_ex/Hand-on_ex3/Hand-on_ex3.2.html#loading-the-r-packages",
+    "href": "Hand-on_ex/Hand-on_ex3/Hand-on_ex3.2.html#loading-the-r-packages",
+    "title": "Hand-on_ex3.2",
+    "section": "1.1 Loading the R packages",
+    "text": "1.1 Loading the R packages\nFirst, write a code chunk to check, install and load the following R packages:\n\nplotly, R library for plotting interactive statistical graphs.\ngganimate, an ggplot extension for creating animated statistical graphs.\ngifski converts video frames to GIF animations using pngquant’s fancy features for efficient cross-frame palettes and temporal dithering. It produces animated GIFs that use thousands of colors per frame.\ngapminder: An excerpt of the data available at Gapminder.org. We just want to use its country_colors scheme.\ntidyverse, a family of modern R packages specially designed to support data science, analysis and communication task including creating static statistical graphs.\n\n\npacman::p_load(readxl, gifski, gapminder,\n               plotly, gganimate, tidyverse)"
+  },
+  {
+    "objectID": "Hand-on_ex/Hand-on_ex3/Hand-on_ex3.2.html#importing-the-data",
+    "href": "Hand-on_ex/Hand-on_ex3/Hand-on_ex3.2.html#importing-the-data",
+    "title": "Hand-on_ex3.2",
+    "section": "1.2 Importing the data",
+    "text": "1.2 Importing the data\nIn this hands-on exercise, the Data worksheet from GlobalPopulation Excel workbook will be used.\nWrite a code chunk to import Data worksheet from GlobalPopulation Excel workbook by using appropriate R package from tidyverse family.\n\ncol &lt;- c(\"Country\", \"Continent\")\nglobalPop &lt;- read_xls(\"data/GlobalPopulation.xls\",\n                      sheet=\"Data\") %&gt;%\n  mutate_each_(funs(factor(.)), col) %&gt;%\n  mutate(Year = as.integer(Year))\n\n\n\n\n\n\n\nNoteThings to learn fro the code chunk above\n\n\n\n\nread_xls() of readxl package is used to import the Excel worksheet.\nmutate_each_() of dplyr package is used to convert all character data type into factor.\nmutate of dplyr package is used to convert data values of Year field into integer.\n\n\n\nUnfortunately, mutate_each_() was deprecated in dplyr 0.7.0. and funs() was deprecated in dplyr 0.8.0. In view of this, we will re-write the code by using mutate_at() as shown in the code chunk below.\n\ncol &lt;- c(\"Country\", \"Continent\")\nglobalPop &lt;- read_xls(\"data/GlobalPopulation.xls\",\n                      sheet=\"Data\") %&gt;%\n  mutate_at(col, as.factor) %&gt;%\n  mutate(Year = as.integer(Year))\n\nInstead of using mutate_at(), across() can be used to derive the same outputs.\n\ncol &lt;- c(\"Country\", \"Continent\")\nglobalPop &lt;- read_xls(\"data/GlobalPopulation.xls\",\n                      sheet=\"Data\") %&gt;%\n  mutate(across(col, as.factor)) %&gt;%\n  mutate(Year = as.integer(Year))"
+  },
+  {
+    "objectID": "Hand-on_ex/Hand-on_ex3/Hand-on_ex3.2.html#building-a-static-population-bubble-plot",
+    "href": "Hand-on_ex/Hand-on_ex3/Hand-on_ex3.2.html#building-a-static-population-bubble-plot",
+    "title": "Hand-on_ex3.2",
+    "section": "2.1 Building a static population bubble plot",
+    "text": "2.1 Building a static population bubble plot\nIn the code chunk below, the basic ggplot2 functions are used to create a static bubble plot.\n\nggplot(globalPop, aes(x = Old, y = Young, \n                      size = Population, \n                      colour = Country)) +\n  geom_point(alpha = 0.7, \n             show.legend = FALSE) +\n  scale_colour_manual(values = country_colors) +\n  scale_size(range = c(2, 12)) +\n  labs(title = 'Year: {frame_time}', \n       x = '% Aged', \n       y = '% Young')"
+  },
+  {
+    "objectID": "Hand-on_ex/Hand-on_ex3/Hand-on_ex3.2.html#building-the-animated-bubble-plot",
+    "href": "Hand-on_ex/Hand-on_ex3/Hand-on_ex3.2.html#building-the-animated-bubble-plot",
+    "title": "Hand-on_ex3.2",
+    "section": "2.2 Building the animated bubble plot",
+    "text": "2.2 Building the animated bubble plot\nIn the code chunk below,\n\ntransition_time() of gganimate is used to create transition through distinct states in time (i.e. Year).\nease_aes() is used to control easing of aesthetics. The default is linear. Other methods are: quadratic, cubic, quartic, quintic, sine, circular, exponential, elastic, back, and bounce.\n\nThe animated bubble chart:\n\nggplot(globalPop, aes(x = Old, y = Young, \n                      size = Population, \n                      colour = Country)) +\n  geom_point(alpha = 0.7, \n             show.legend = FALSE) +\n  scale_colour_manual(values = country_colors) +\n  scale_size(range = c(2, 12)) +\n  labs(title = 'Year: {frame_time}', \n       x = '% Aged', \n       y = '% Young') +\n  transition_time(Year) +       \n  ease_aes('linear')"
   }
 ]
