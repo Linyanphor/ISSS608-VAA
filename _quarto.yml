@@ -33,6 +33,10 @@ website:
             href: "Hand-on_ex/Hand-on_ex5/Hands-on_Ex5.4.qmd"
           - text: "Hands-on Exercise 5.5"
             href: "Hand-on_ex/Hand-on_ex5/Hands-on_Ex5.5.qmd"
+      - text: "Take Home Exercise"
+        menu:
+          - text: "Take Home Exercise"
+            href: "Take-home_Ex/Take-home_Ex01/Take-home_Ex01.qmd"
     right:
       - text: Home
         href: index.qmd
