@@ -1202,5 +1202,82 @@
     "title": "Take-home_Ex01",
     "section": "3.7 Income Composition Across Quintiles",
     "text": "3.7 Income Composition Across Quintiles\nIncome sources are aggregated to compare agricultural and non-agricultural contributions across income quintiles.\n\n\nShow code\nclean_data %&gt;%\n  group_by(Quintile) %&gt;%\n  summarise(\n    Agri = mean(Agri_Income, na.rm = TRUE),\n    Non_Agri = mean(Service_Income + Other_Income, na.rm = TRUE),\n    .groups = \"drop\"\n  ) %&gt;%\n  pivot_longer(-Quintile, names_to = \"Source\", values_to = \"Income_Value\") %&gt;%\n  ggplot(aes(x = Quintile, y = Income_Value, fill = Source)) +\n  geom_col(width = 0.7) +\n  scale_fill_manual(values = c(\"Agri\" = COL_GREY, \"Non_Agri\" = COL_BLUE)) +\n  labs(\n    title = \"Income Composition by Quintile\",\n    x = \"Income Quintile\",\n    y = \"Average Income (Million VND)\",\n    fill = \"Source\"\n  )\n\n\n\n\n\n\n\n\n\nObservation: The stacked bar chart shows that total income increases steadily across income quintiles. In the lower quintiles, income is mainly derived from agriculture, with relatively small contributions from non-agricultural sources. As we move to higher quintiles, the proportion and volume of non-agricultural income increase significantly. In the top quintile, non-agricultural income becomes the dominant source of earnings, while agricultural income remains relatively stable across groups. This suggests that higher income levels are strongly associated with income diversification beyond agriculture."
+  },
+  {
+    "objectID": "Hand-on_ex/Hand-on_ex7/Hands-on_Ex7.html#importing-packages",
+    "href": "Hand-on_ex/Hand-on_ex7/Hands-on_Ex7.html#importing-packages",
+    "title": "Hands-on Exercise 7",
+    "section": "2.1 Importing Packages",
+    "text": "2.1 Importing Packages\n\npacman::p_load(scales, viridis, lubridate, ggthemes,\n               gridExtra, readxl, knitr, data.table, ggHoriPlot, tidyverse)\n\n\n\n\n\n\n\nNoteVery Important Note!\n\n\n\n\nIn late 2025, CGPfunctions was taken down from CRAN after failing to meet CRAN’s automated check requirements.\nTo continue using it, we need to install the package directly from the developer’s GitHub. The catch is that it depends on ggmosaic, which itself runs into compatibility issues with newer R releases.\nWhat to do: Install both packages straight from their respective GitHub sources. Execute the commands below in R console one at a time to get everything running smoothly.\n\n\n\n\n\nCode\n# Install 'ggmosaic'\nremotes::install_github(\"haleyjeppson/ggmosaic\")\n\n\n\n\nCode\n# Install 'CGPfunctions'\nremotes::install_github(\"ibecav/CGPfunctions\")\n\nlibrary(CGPfunctions)"
+  },
+  {
+    "objectID": "Hand-on_ex/Hand-on_ex7/Hands-on_Ex7.html#plotting-calendar-heatmap",
+    "href": "Hand-on_ex/Hand-on_ex7/Hands-on_Ex7.html#plotting-calendar-heatmap",
+    "title": "Hands-on Exercise 7",
+    "section": "2.2 Plotting Calendar Heatmap",
+    "text": "2.2 Plotting Calendar Heatmap\nIn this section, I will learn how to plot a calender heatmap programmatically by using ggplot2 package.\n\nBy the end of this section, you will be able to:\n\nplot a calender heatmap by using ggplot2 functions and extension,\nto write function using R programming,\nto derive specific date and time related field by using base R and lubridate packages\nto perform data preparation task by using tidyr and dplyr packages."
+  },
+  {
+    "objectID": "Hand-on_ex/Hand-on_ex7/Hands-on_Ex7.html#the-data",
+    "href": "Hand-on_ex/Hand-on_ex7/Hands-on_Ex7.html#the-data",
+    "title": "Hands-on Exercise 7",
+    "section": "2.3 The Data",
+    "text": "2.3 The Data\nFor the purpose of this hands-on exercise, eventlog.csv file will be used. This data file consists of 199,999 rows of time-series cyber attack records by country.\n\n2.3.1 Importing the data\n\nattacks &lt;- read_csv(\"data/eventlog.csv\")\n\n\n\n2.3.2 Examining the data structure\nIt is always a good practice to examine the imported data frame before further analysis is performed.\nFor example, kable() can be used to review the structure of the imported data frame.\n\nkable(head(attacks))\n\n\n\n\ntimestamp\nsource_country\ntz\n\n\n\n\n2015-03-12 15:59:16\nCN\nAsia/Shanghai\n\n\n2015-03-12 16:00:48\nFR\nEurope/Paris\n\n\n2015-03-12 16:02:26\nCN\nAsia/Shanghai\n\n\n2015-03-12 16:02:38\nUS\nAmerica/Chicago\n\n\n2015-03-12 16:03:22\nCN\nAsia/Shanghai\n\n\n2015-03-12 16:03:45\nCN\nAsia/Shanghai\n\n\n\n\n\nThere are three columns, namely timestamp, source_country and tz.\n\ntimestamp field stores date-time values in POSIXct format.\nsource_country field stores the source of the attack. It is in ISO 3166-1 alpha-2 country code.\ntz field stores time zone of the source IP address.\n\n\n\n2.3.3 Data Preparation\nStep 1: Deriving weekday and hour of day fields\nBefore we can plot the calendar heatmap, two new fields namely wkday and hour need to be derived. In this step, we will write a function to perform the task.\n\nmake_hr_wkday &lt;- function(ts, sc, tz) {\n  real_times &lt;- ymd_hms(ts, \n                        tz = tz[1], \n                        quiet = TRUE)\n  dt &lt;- data.table(source_country = sc,\n                   wkday = weekdays(real_times),\n                   hour = hour(real_times))\n  return(dt)\n  }\n\n\n\n\n\n\n\nNoteNote\n\n\n\n\nymd_hms() and hour() are from lubridate package, and\nweekdays() is a base R function.\n\n\n\nStep 2: Deriving the attacks tibble data frame\n\nwkday_levels &lt;- c('Saturday', 'Friday', \n                  'Thursday', 'Wednesday', \n                  'Tuesday', 'Monday', \n                  'Sunday')\n\nattacks &lt;- attacks %&gt;%\n  group_by(tz) %&gt;%\n  do(make_hr_wkday(.$timestamp, \n                   .$source_country, \n                   .$tz)) %&gt;% \n  ungroup() %&gt;% \n  mutate(wkday = factor(\n    wkday, levels = wkday_levels),\n    hour  = factor(\n      hour, levels = 0:23))\n\n\n\n\n\n\n\nNoteNote\n\n\n\nBeside extracting the necessary data into attacks data frame, mutate() of dplyr package is used to convert wkday and hour fields into factor so they’ll be ordered when plotting\n\n\nTable below shows the tidy tibble table after processing\n\nkable(head(attacks))\n\n\n\n\ntz\nsource_country\nwkday\nhour\n\n\n\n\nAfrica/Cairo\nBG\nSaturday\n20\n\n\nAfrica/Cairo\nTW\nSunday\n6\n\n\nAfrica/Cairo\nTW\nSunday\n8\n\n\nAfrica/Cairo\nCN\nSunday\n11\n\n\nAfrica/Cairo\nUS\nSunday\n15\n\n\nAfrica/Cairo\nCA\nMonday\n11"
+  },
+  {
+    "objectID": "Hand-on_ex/Hand-on_ex7/Hands-on_Ex7.html#plotting-multiple-calendar-heatmaps",
+    "href": "Hand-on_ex/Hand-on_ex7/Hands-on_Ex7.html#plotting-multiple-calendar-heatmaps",
+    "title": "Hands-on Exercise 7",
+    "section": "4.1 Plotting Multiple Calendar Heatmaps",
+    "text": "4.1 Plotting Multiple Calendar Heatmaps\n\nggplot(top4_attacks, \n       aes(hour, \n           wkday, \n           fill = n)) + \n  geom_tile(color = \"white\", \n          size = 0.1) + \n  theme_tufte(base_family = \"Helvetica\") + \n  coord_equal() +\n  scale_fill_gradient(name = \"# of attacks\",\n                    low = \"sky blue\", \n                    high = \"dark blue\") +\n  facet_wrap(~source_country, ncol = 2) +\n  labs(x = NULL, y = NULL, \n     title = \"Attacks on top 4 countries by weekday and time of day\") +\n  theme(axis.ticks = element_blank(),\n        axis.text.x = element_text(size = 7),\n        plot.title = element_text(hjust = 0.5),\n        legend.title = element_text(size = 8),\n        legend.text = element_text(size = 6) )"
+  },
+  {
+    "objectID": "Hand-on_ex/Hand-on_ex7/Hands-on_Ex7.html#step-1-data-import",
+    "href": "Hand-on_ex/Hand-on_ex7/Hands-on_Ex7.html#step-1-data-import",
+    "title": "Hands-on Exercise 7",
+    "section": "5.1 Step 1: Data Import",
+    "text": "5.1 Step 1: Data Import\nFor the purpose of this hands-on exercise, arrivals_by_air.xlsx will be used.\nThe code chunk below imports arrivals_by_air.xlsx by using read_excel() of readxl package and save it as a tibble data frame called air.\n\nair &lt;- read_excel(\"data/arrivals_by_air.xlsx\")"
+  },
+  {
+    "objectID": "Hand-on_ex/Hand-on_ex7/Hands-on_Ex7.html#step-2-deriving-month-and-year-fields",
+    "href": "Hand-on_ex/Hand-on_ex7/Hands-on_Ex7.html#step-2-deriving-month-and-year-fields",
+    "title": "Hands-on Exercise 7",
+    "section": "5.2 Step 2: Deriving month and year fields",
+    "text": "5.2 Step 2: Deriving month and year fields\nNext, two new fields called month and year are derived from Month-Year field.\n\nair$month &lt;- factor(month(air$`Month-Year`), \n                    levels=1:12, \n                    labels=month.abb, \n                    ordered=TRUE) \nair$year &lt;- year(ymd(air$`Month-Year`))"
+  },
+  {
+    "objectID": "Hand-on_ex/Hand-on_ex7/Hands-on_Ex7.html#step-3-extracting-the-target-country",
+    "href": "Hand-on_ex/Hand-on_ex7/Hands-on_Ex7.html#step-3-extracting-the-target-country",
+    "title": "Hands-on Exercise 7",
+    "section": "5.3 Step 3: Extracting the target country",
+    "text": "5.3 Step 3: Extracting the target country\nNext, the code chunk below is use to extract data for the target country (i.e. Vietnam)\n\nVietnam &lt;- air %&gt;% \n  select(`Vietnam`, \n         month, \n         year) %&gt;%\n  filter(year &gt;= 2010)"
+  },
+  {
+    "objectID": "Hand-on_ex/Hand-on_ex7/Hands-on_Ex7.html#step-4-computing-year-average-arrivals-by-month",
+    "href": "Hand-on_ex/Hand-on_ex7/Hands-on_Ex7.html#step-4-computing-year-average-arrivals-by-month",
+    "title": "Hands-on Exercise 7",
+    "section": "5.4 Step 4: Computing year average arrivals by month",
+    "text": "5.4 Step 4: Computing year average arrivals by month\nThe code chunk below uses group_by() and summarise() of dplyr to compute year average arrivals by month.\n\nhline.data &lt;- Vietnam %&gt;% \n  group_by(month) %&gt;%\n  summarise(avgvalue = mean(`Vietnam`))"
+  },
+  {
+    "objectID": "Hand-on_ex/Hand-on_ex7/Hands-on_Ex7.html#step-5-plotting-the-cycle-plot",
+    "href": "Hand-on_ex/Hand-on_ex7/Hands-on_Ex7.html#step-5-plotting-the-cycle-plot",
+    "title": "Hands-on Exercise 7",
+    "section": "5.5 Step 5: Plotting the cycle plot",
+    "text": "5.5 Step 5: Plotting the cycle plot\n\n\n\n\n\n\nTipSlight modification to code\n\n\n\nThe X-Axis is all squished up in the original cycle plot, I have made some changes to plot it clearly\n\n\n\n# Use existing integer year column\nVietnam$year_num &lt;- Vietnam$year\n\n# Plot\nggplot() + \n  geom_line(data = Vietnam,\n            aes(x = year_num, \n                y = Vietnam, \n                group = month), \n            colour = \"black\") +\n  geom_hline(data = hline.data, \n             aes(yintercept = avgvalue), \n             linetype = 6, \n             colour = \"red\", \n             size = 0.5) + \n  facet_grid(~month) +\n  labs(\n    title = \"Visitor arrivals from Vietnam by air, Jan 2010–Dec 2019\",\n    x = \"\",\n    y = \"No. of Visitors\"\n  ) +\n  theme_tufte(base_family = \"Helvetica\") +\n  theme(\n    axis.text.x = element_blank(),\n    axis.ticks.x = element_blank()\n  )"
+  },
+  {
+    "objectID": "Hand-on_ex/Hand-on_ex7/Hands-on_Ex7.html#step-1-data-import-1",
+    "href": "Hand-on_ex/Hand-on_ex7/Hands-on_Ex7.html#step-1-data-import-1",
+    "title": "Hands-on Exercise 7",
+    "section": "6.1 Step 1: Data Import",
+    "text": "6.1 Step 1: Data Import\nImport the rice data set into R environment by using the code chunk below:\n\nrice &lt;- read_csv(\"data/rice.csv\")"
+  },
+  {
+    "objectID": "Hand-on_ex/Hand-on_ex7/Hands-on_Ex7.html#step-2-plotting-the-slopegraph",
+    "href": "Hand-on_ex/Hand-on_ex7/Hands-on_Ex7.html#step-2-plotting-the-slopegraph",
+    "title": "Hands-on Exercise 7",
+    "section": "6.2 Step 2: Plotting the slopegraph",
+    "text": "6.2 Step 2: Plotting the slopegraph\n\n\nCode\nrice %&gt;% \n  mutate(Year = factor(Year)) %&gt;%\n  filter(Year %in% c(1961, 1980)) %&gt;%\n  newggslopegraph(Year, Yield, Country,\n                Title = \"Rice Yield of Top 11 Asian Counties\",\n                SubTitle = \"1961-1980\",\n                Caption = \"Prepared by: Lin Yan\")\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nTipThing to learn from the code chunk above\n\n\n\nFor effective data visualisation design, factor() is used convert the value type of Year field from numeric to factor."
   }
 ]
