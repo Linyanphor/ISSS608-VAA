@@ -36,7 +36,11 @@ website:
           - text: "Hands-on Exercise 7"
             href: "Hand-on_ex/Hand-on_ex7/Hands-on_Ex7.qmd"
           - text: "Hands-on Exercise 8.1"
-            href: "Hand-on_ex/Hand-on_ex8/Hands-on_Ex8.1.qmd"            
+            href: "Hand-on_ex/Hand-on_ex8/Hands-on_Ex8.1.qmd" 
+          - text: "Hands-on Exercise 8.2"
+            href: "Hand-on_ex/Hand-on_ex8/Hands-on_Ex8.2.qmd" 
+          - text: "Hands-on Exercise 8.3"
+            href: "Hand-on_ex/Hand-on_ex8/Hands-on_Ex8.3.qmd"    
       - text: "Take Home Exercise"
         menu:
           - text: "Take Home Exercise"
