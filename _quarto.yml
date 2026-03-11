@@ -40,7 +40,9 @@ website:
           - text: "Hands-on Exercise 8.2"
             href: "Hand-on_ex/Hand-on_ex8/Hands-on_Ex8.2.qmd" 
           - text: "Hands-on Exercise 8.3"
-            href: "Hand-on_ex/Hand-on_ex8/Hands-on_Ex8.3.qmd"    
+            href: "Hand-on_ex/Hand-on_ex8/Hands-on_Ex8.3.qmd"  
+          - text: "Hands-on Exercise 9"
+            href: "Hand-on_ex/Hand-on_ex9/Hands-on_Ex9.qmd"   
       - text: "Take Home Exercise"
         menu:
           - text: "Take Home Exercise"
