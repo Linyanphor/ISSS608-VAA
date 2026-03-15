@@ -45,9 +45,9 @@ website:
             href: "Hand-on_ex/Hand-on_ex9/Hands-on_Ex9.qmd"   
       - text: "Take Home Exercise"
         menu:
-          - text: "Take Home Exercise"
+          - text: "Take Home Exercise 1"
             href: "Take-home_Ex/Take-home_Ex01/Take-home_Ex01.qmd"
-          - text: "Take Home Exercise"
+          - text: "Take Home Exercise 2"
             href: "Take-home_Ex/Take-home_Ex02/Take-home_Ex02_LinYan.qmd"
     right:
       - text: Home
